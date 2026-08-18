@@ -1,0 +1,97 @@
+@import "tailwindcss";
+
+/*
+ * Chart tokens.
+ *
+ * Sentiment is an ordered polarity scale, so the three buckets use a diverging
+ * assignment: two hues that read as opposite either side of a neutral gray.
+ * Blue/red rather than the obvious green/red — green vs red is the one pair that
+ * collapses under the most common form of colour blindness, and the whole chart
+ * hangs on telling those two apart.
+ *
+ * The dark column is the same hues re-stepped for the dark surface, not an
+ * automatic inversion. Both sets clear 3:1 against their own surface.
+ */
+:root {
+  --surface: #fcfcfb;
+  --plane: #f9f9f7;
+  --ink: #0b0b0b;
+  --ink-secondary: #52514e;
+  --ink-muted: #898781;
+  --rule: #e1e0d9;
+  --axis: #c3c2b7;
+  --hairline: rgba(11, 11, 11, 0.1);
+  --wash: rgba(11, 11, 11, 0.04);
+
+  --tone-positive: #2a78d6;
+  --tone-neutral: #898781;
+  --tone-negative: #e34948;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --surface: #1a1a19;
+    --plane: #0d0d0d;
+    --ink: #ffffff;
+    --ink-secondary: #c3c2b7;
+    --ink-muted: #898781;
+    --rule: #2c2c2a;
+    --axis: #383835;
+    --hairline: rgba(255, 255, 255, 0.1);
+    --wash: rgba(255, 255, 255, 0.06);
+
+    --tone-positive: #3987e5;
+    --tone-neutral: #898781;
+    --tone-negative: #e66767;
+  }
+}
+
+@theme inline {
+  --color-surface: var(--surface);
+  --color-plane: var(--plane);
+  --color-ink: var(--ink);
+  --color-ink-secondary: var(--ink-secondary);
+  --color-ink-muted: var(--ink-muted);
+  --color-rule: var(--rule);
+  --color-axis: var(--axis);
+  --color-hairline: var(--hairline);
+  --color-wash: var(--wash);
+  --color-positive: var(--tone-positive);
+  --color-neutral: var(--tone-neutral);
+  --color-negative: var(--tone-negative);
+}
+
+/*
+ * The platform UI sans rather than a webfont. One less network request, no
+ * layout shift on first paint, and it's the face the rest of the OS already uses.
+ */
+:root {
+  --font-ui: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue",
+    Arial, sans-serif;
+}
+
+html {
+  color-scheme: light dark;
+}
+
+body {
+  background: var(--plane);
+  color: var(--ink);
+  font-family: var(--font-ui);
+}
+
+/* Card chrome, repeated on every panel. */
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--hairline);
+  border-radius: 12px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
