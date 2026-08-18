@@ -46,3 +46,5 @@ CLAUDE.md
 
 # ...but the sample env file should be committed.
 !.env.example
+
+.vercel

@@ -3,9 +3,7 @@
 Fetches the 50 hottest posts from any public subreddit and scores every title
 for sentiment, then shows how the community is leaning right now.
 
-**Live:** _(deployment URL)_
-
----
+## **Live:** https://subreddit-vibe-check-sage-gamma.vercel.app/?r=science
 
 ## Running it
 
@@ -52,8 +50,8 @@ call is rejected. This one is easy to get wrong: the same `fetch` from a
 fails. Run from the deployed page's console:
 
 ```js
-fetch('https://www.reddit.com/r/news/hot.json?limit=2')                    // throws
-fetch('https://www.reddit.com/r/news/hot.json?limit=2', {mode:'no-cors'})  // resolves, opaque
+fetch("https://www.reddit.com/r/news/hot.json?limit=2"); // throws
+fetch("https://www.reddit.com/r/news/hot.json?limit=2", { mode: "no-cors" }); // resolves, opaque
 ```
 
 `no-cors` succeeding proves the network path is fine and CORS is the blocker
@@ -62,7 +60,7 @@ specifically — not a blocked domain or an offline host.
 **Reddit rate limits clients without a descriptive `User-Agent`,** and
 `User-Agent` is a forbidden header name in browsers — scripts cannot set it.
 
-Sentiment analysis deliberately does *not* happen in the route. It runs in the
+Sentiment analysis deliberately does _not_ happen in the route. It runs in the
 browser, so the server stays a pure data hop.
 
 ### Why a deployment needs credentials
@@ -73,11 +71,17 @@ deployment returned exactly that from all three public hosts, with
 `old.reddit.com` serving a page literally titled "Blocked":
 
 ```json
-{ "reachable": false, "attempts": [
-  { "url": "https://www.reddit.com/r/programming/hot.json...", "status": 403 },
-  { "url": "https://api.reddit.com/r/programming/hot...",      "status": 403 },
-  { "url": "https://old.reddit.com/r/programming/hot.json...", "status": 403 }
-]}
+{
+  "reachable": false,
+  "attempts": [
+    {
+      "url": "https://www.reddit.com/r/programming/hot.json...",
+      "status": 403
+    },
+    { "url": "https://api.reddit.com/r/programming/hot...", "status": 403 },
+    { "url": "https://old.reddit.com/r/programming/hot.json...", "status": 403 }
+  ]
+}
 ```
 
 The authenticated API isn't filtered that way, so the route uses OAuth
@@ -132,14 +136,14 @@ configured, and what each host returned.
 Every unauthenticated route into Reddit is closed from a hosting provider, and
 this was established by testing rather than assumed:
 
-| Route | Result |
-|---|---|
-| Browser → Reddit directly | CORS rejected (`no-cors` resolves opaque, so the network is fine) |
-| Vercel → `www` / `api` / `old` reddit.com | **403** bot-challenge page from all three |
-| Cloudflare Worker → Reddit | **403**, same challenge page |
-| OAuth `client_credentials` | app creation gated by Reddit's Responsible Builder Policy |
-| JSONP (`?jsonp=`) | no longer supported — the script fails to load |
-| Node on a home connection | **403** — same network a browser is served on |
+| Route                                     | Result                                                            |
+| ----------------------------------------- | ----------------------------------------------------------------- |
+| Browser → Reddit directly                 | CORS rejected (`no-cors` resolves opaque, so the network is fine) |
+| Vercel → `www` / `api` / `old` reddit.com | **403** bot-challenge page from all three                         |
+| Cloudflare Worker → Reddit                | **403**, same challenge page                                      |
+| OAuth `client_credentials`                | app creation gated by Reddit's Responsible Builder Policy         |
+| JSONP (`?jsonp=`)                         | no longer supported — the script fails to load                    |
+| Node on a home connection                 | **403** — same network a browser is served on                     |
 
 The same code works perfectly from an ordinary connection. The block is on the
 IP range, not the code.
@@ -161,13 +165,13 @@ Run locally and you get live Reddit, no configuration, no snapshot.
 `vader-sentiment` is a lexicon model tuned specifically for short social text,
 which is exactly what a post title is. The alternative, `sentiment` (AFINN-165),
 sums word scores and nothing else — so it reads "this is **not** good" as
-positive, because *good* is in the list and negation isn't modelled.
+positive, because _good_ is in the list and negation isn't modelled.
 
-| Title | AFINN | VADER |
-|---|---|---|
-| `This is not good` | positive | **negative** |
-| `The release is GREAT!!!` | same as lowercase | **scores higher** |
-| `Worst. Update. Ever.` | negative | **negative, intensified** |
+| Title                     | AFINN             | VADER                     |
+| ------------------------- | ----------------- | ------------------------- |
+| `This is not good`        | positive          | **negative**              |
+| `The release is GREAT!!!` | same as lowercase | **scores higher**         |
+| `Worst. Update. Ever.`    | negative          | **negative, intensified** |
 
 Scores use VADER's `compound` metric (−1 to +1). Titles between −0.05 and +0.05
 count as neutral — VADER's own recommended cutoffs.
@@ -212,7 +216,7 @@ hover-only.
   grim thread reads as cheerful.
 - VADER is a lexicon model. Sarcasm, irony, in-jokes and subreddit-specific
   slang all sail straight past it — the numbers are a temperature, not a verdict.
-- A single 50-post snapshot of *hot*. It's a reading of this moment, not a trend.
+- A single 50-post snapshot of _hot_. It's a reading of this moment, not a trend.
 - Private, quarantined and banned subreddits return an error by design.
 - Reddit's tolerance for cloud IP ranges is theirs to change, and the
   unauthenticated path is already blocked there. `/api/diag` exists to make that
